@@ -1,0 +1,105 @@
+pipeline {
+    
+    agent {
+        node {
+            label 'master'
+        }
+    }
+    
+    environment {
+        JENKINS_NODE_COOKIE = 'dontkill'
+    }
+    
+    stages {
+        stage('Preparation') { // for display purposes
+            steps {
+              // clean the workspace
+              cleanWs()
+            }
+        }
+
+       stage('Download') {
+           steps {
+              // Download code from a GitHub repository
+              git branch: 'master', url: 'https://github.com/1905-javareact/Demos'
+           }
+        }
+        
+        stage("Kill old container"){
+            steps{
+                script{
+                    try{
+                        sh"docker stop \$(docker ps -a -q --filter \"name=serviceregistry\")"
+                        sh"docker rm \$(docker ps -a -q --filter \"name=serviceregistry\")"
+                    } 
+                    catch(e){
+                    
+                    }
+                    
+                }
+                
+            }
+        }
+
+        stage('MVN Build') {
+            steps {
+                dir('7week') {
+                    dir('ServiceRegistry') {
+                        // Run the maven build
+                        sh "mvn -Dmaven.test.failure.ignore clean package"
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image'){
+            steps{
+                 dir('7week') {
+                    dir('ServiceRegistry') {
+                        
+                        sh "docker build . -t serviceregistry "
+                    }
+                } 
+            }
+        }
+        
+        
+
+        stage('Deploy') {
+            steps{
+                sh "docker run -p 8088:8088 -d --name serviceregistry serviceregistry"
+            }
+        }
+
+    }
+    
+    post {
+        always {
+            sh "echo 'i always run'"
+            
+            /* SLACK message example
+            
+            slackSend channel: '#some-channel',
+                color: 'good',
+                message: "The Janus server has attempted a build"
+                
+            */
+        }
+        
+        success {
+            sh "echo 'i only run on success'"
+        }
+        
+        unstable {
+            sh "echo 'i run when the build is unstable (testing?)'"
+        }
+        
+        failure {
+            sh "echo 'i run when things failed'"
+        }
+        
+        changed {
+            sh "echo 'i run when there is a successful build after a failed one'"
+            sh "echo 'or a failed build after a successful one'"
+        }
+    }
+}
