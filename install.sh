@@ -22,15 +22,15 @@ sudo yum -y install nodejs
 
 echo "downloading tomcat tar.gz"
 sudo cd /tmp
-sudo wget http://ftp.wayne.edu/apache/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz
-sudo tar -xzvf apache-tomcat-8.5.35.tar.gz
+sudo wget http://ftp.wayne.edu/apache/tomcat/tomcat-9/v9.0.41/bin/apache-tomcat-9.0.41.tar.gz
+sudo tar -xzvf apache-tomcat-9.0.41.tar.gz
 echo "giving ec2-user permission for tomcat"
-sudo chmod 777 -R apache-tomcat-8.5.35
+sudo chmod 777 -R apache-tomcat-9.0.41
 sudo mkdir /usr/apache
-sudo mv apache-tomcat-8.5.35 /usr/apache/
-sudo sed -i 's/<Connector port="8080"/<Connector port="8090"/' /usr/apache/apache-tomcat-8.5.35/conf/server.xml
-sudo sh /usr/apache/apache-tomcat-8.5.35/bin/startup.sh
-echo "CATALINA_HOME=/usr/apache/apache-tomcat-8.5.35"  >> ~/.bashrc
+sudo mv apache-tomcat-9.0.41 /usr/apache/
+sudo sed -i 's/<Connector port="8080"/<Connector port="8090"/' /usr/apache/apache-tomcat-9.0.41/conf/server.xml
+sudo sh /usr/apache/apache-tomcat-9.0.41/bin/startup.sh
+echo "CATALINA_HOME=/usr/apache/apache-tomcat-9.0.41"  >> ~/.bashrc
 echo "export CATALINA_HOME"  >> ~/.bashrc
 
 echo "installing jenkins"
