@@ -17,7 +17,7 @@ sudo yum install -y apache-maven
 echo "maven installed"
 
 echo "installing node"
-curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+curl --silent --location https://rpm.nodesource.com/setup_14.x | sudo bash -
 sudo yum -y install nodejs
 
 echo "downloading tomcat tar.gz"
